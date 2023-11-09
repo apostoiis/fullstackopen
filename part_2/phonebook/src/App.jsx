@@ -35,7 +35,10 @@ const App = () => {
         setPersons={setPersons}
       />
       <h2>Numbers</h2>
-      <Persons persons={searchTerm ? filteredPersons : persons} />
+      <Persons
+        persons={searchTerm ? filteredPersons : persons}
+        setPersons={setPersons}
+      />
     </div>
   );
 };
