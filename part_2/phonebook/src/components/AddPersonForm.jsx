@@ -7,6 +7,7 @@ export default function AddPersonForm({
   setPhoneNumber,
   persons,
   setPersons,
+  setAddedPersonMessage,
 }) {
   const handleNameChange = (e) => {
     setNewName(e.target.value);
@@ -28,19 +29,28 @@ export default function AddPersonForm({
       const findPersonId = findPerson.id;
 
       const confirmUpdate = window.confirm(
-        `${newName} is already added to phonebook, replace the old number with a new one?`
+        `${newName} is already added to phonebook, replace the old number with a new one?`,
       );
 
       if (confirmUpdate)
         updatePersonNumber(findPersonId, {
           name: newName,
           number: phoneNumber,
-        }).then((updatedPerson) => {
-          const newPersonsArray = persons.map((person) =>
-            person.id !== findPersonId ? person : updatedPerson
+        })
+          .then((updatedPerson) => {
+            const newPersonsArray = persons.map((person) =>
+              person.id !== findPersonId ? person : updatedPerson,
+            );
+
+            setPersons(newPersonsArray);
+            setAddedPersonMessage(`${updatedPerson.name} is updated!`);
+            setTimeout(() => {
+              setAddedPersonMessage(null);
+            }, 2000);
+          })
+          .catch((err) =>
+            setAddedPersonMessage(`${updatedPerson.name} is already deleted!`),
           );
-          setPersons(newPersonsArray);
-        });
 
       return;
     }
@@ -51,7 +61,13 @@ export default function AddPersonForm({
     };
 
     addPerson(newPersonObject)
-      .then((response) => setPersons([...persons, response]))
+      .then((response) => {
+        setPersons([...persons, response]);
+        setAddedPersonMessage(`${response.name} is added!`);
+        setTimeout(() => {
+          setAddedPersonMessage(null);
+        }, 2000);
+      })
       .catch((err) => console.log(err))
       .finally(() => {
         setNewName("");

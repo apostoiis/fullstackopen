@@ -1,11 +1,19 @@
 import { deletePerson } from "../services/persons";
 
-export default function Persons({ persons, setPersons }) {
-  const handleDeletePerson = (id) => {
+export default function Persons({
+  persons,
+  setPersons,
+  setAddedPersonMessage,
+}) {
+  const handleDeletePerson = (person) => {
     window.confirm("Are you sure?");
-    deletePerson(id).then(() => {
-      setPersons(persons.filter((person) => person.id !== id));
-    });
+    deletePerson(person.id)
+      .then((response) => {
+        setPersons(persons.filter((p) => p.id !== person.id));
+      })
+      .catch((err) =>
+        setAddedPersonMessage(`${response.name} is already deleted!`)
+      );
   };
 
   return (
@@ -13,7 +21,7 @@ export default function Persons({ persons, setPersons }) {
       {persons.map((person) => (
         <li key={person.name}>
           {person.name} - {person.number}
-          <button onClick={() => handleDeletePerson(person.id)}>Delete</button>
+          <button onClick={() => handleDeletePerson(person)}>Delete</button>
         </li>
       ))}
     </ul>
